@@ -11,21 +11,21 @@ func main() {
 	// Parse provided parameters
 	principal := flag.Float64("principal", 0, "The amount borrowed.")
 	interest := flag.Float64("interest", 0, "The interest rate.")
-	period := flag.Uint("period", 0, "Loan term; amount of time in months to pay off the loan.")
 	amount := flag.Float64("amount", 0, "Monthly repayment amount.")
+	period := flag.Uint("period", 0, "Loan term; amount of time in months to pay off the loan.")
 	flag.Parse()
 
 	// Determine the missing parameter that needs to be calculated
 	switch {
 	case !isFlagPassed("principal"):
-		// calculatePrincipal()
-		fmt.Println("Calculating Principal")
+		*principal = math.Round(calculatePrincipal(*interest, *amount, *period))
+		fmt.Printf("Your loan principal is = %f!", *principal)
 	case !isFlagPassed("interest"):
 		// calculateInterest()
 		fmt.Println("Calculating Interest")
 	case !isFlagPassed("period"):
-		fmt.Println("Calculating Period")
 		*period = calculatePeriod(*amount, *principal, *interest)
+		fmt.Printf("Your loan period is = %d months!", *period)
 	case !isFlagPassed("amount"):
 		// calculateAmount()
 		fmt.Println("Calculating Amount")
@@ -44,8 +44,19 @@ func isFlagPassed(flagName string) bool {
 	return found
 }
 
-func calculatePeriod(principal, interestRate, amount float64) uint {
-	i := interestRate / (12 * 100) // Convert annual interest rate to monthly and to a decimal
+func convertInterest(interest float64) float64 {
+	return interest / (12 * 100) // Convert annual interest rate to monthly and to a decimal
+}
+
+func calculatePrincipal(interest, amount float64, period uint) float64 {
+	i := convertInterest(interest)
+	numerator := amount
+	denominator := (i * math.Pow(1+i, float64(period))) / (math.Pow(1+i, float64(period)) - 1)
+	return numerator / denominator
+}
+
+func calculatePeriod(principal, interest, amount float64) uint {
+	i := convertInterest(interest)
 	n := math.Log(amount/(amount-i*principal)) / math.Log(1+i)
 	return uint(math.Ceil(n)) // Round up to the next whole number
 }
