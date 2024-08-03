@@ -19,15 +19,15 @@ func main() {
 	switch {
 	case !isFlagPassed("principal"):
 		*principal = calculatePrincipal(*interest, *payment, *periods)
-		fmt.Printf("Your loan principal is = %f!", *principal)
+		fmt.Printf("Your loan principal is = %.0f!", *principal)
 	case !isFlagPassed("interest"):
 		fmt.Println("Please provide an annual interest rate!")
 	case !isFlagPassed("periods"):
-		*periods = calculatePeriods(*payment, *principal, *interest)
+		*periods = calculatePeriods(*principal, *interest, *payment)
 		fmt.Printf("Your loan period is = %d months!", *periods)
 	case !isFlagPassed("payment"):
 		*payment = calculatePayment(*principal, *interest, *periods)
-		fmt.Printf("Your monthly payment = %f!", *payment)
+		fmt.Printf("Your monthly payment = %.0f!", *payment)
 	}
 
 }
