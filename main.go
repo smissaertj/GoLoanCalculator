@@ -44,8 +44,8 @@ func isFlagPassed(flagName string) bool {
 	return found
 }
 
-func calculatePeriod(payment, principal, interestRate float64) uint {
+func calculatePeriod(principal, interestRate, amount float64) uint {
 	i := interestRate / (12 * 100) // Convert annual interest rate to monthly and to a decimal
-	n := math.Log(payment/(payment-i*principal)) / math.Log(1+i)
+	n := math.Log(amount/(amount-i*principal)) / math.Log(1+i)
 	return uint(math.Ceil(n)) // Round up to the next whole number
 }
