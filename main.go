@@ -3,15 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math"
 )
 
 func main() {
 
 	// Parse provided parameters
-	principal := flag.Uint64("principal", 0, "The amount borrowed.")
-	interest := flag.Uint("interest", 0, "The interest rate.")
+	principal := flag.Float64("principal", 0, "The amount borrowed.")
+	interest := flag.Float64("interest", 0, "The interest rate.")
 	period := flag.Uint("period", 0, "Loan term; amount of time in months to pay off the loan.")
-	amount := flag.Uint64("amount", 0, "Monthly repayment amount.")
+	amount := flag.Float64("amount", 0, "Monthly repayment amount.")
 	flag.Parse()
 
 	// Determine the missing parameter that needs to be calculated
@@ -23,8 +24,8 @@ func main() {
 		// calculateInterest()
 		fmt.Println("Calculating Interest")
 	case !isFlagPassed("period"):
-		// calculatePeriod()
 		fmt.Println("Calculating Period")
+		*period = uint(calculatePeriod(*amount, *principal, *interest))
 	case !isFlagPassed("amount"):
 		// calculateAmount()
 		fmt.Println("Calculating Amount")
@@ -41,4 +42,12 @@ func isFlagPassed(flagName string) bool {
 		}
 	})
 	return found
+}
+
+func calculatePeriod(payment, principal, interestRate float64) int {
+	i := interestRate / (12 * 100) // Convert annual interest rate to monthly and to a decimal
+
+	n := math.Log(payment/(payment-i*principal)) / math.Log(1+i)
+
+	return int(math.Ceil(n)) // Round up to the next whole number
 }
