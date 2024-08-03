@@ -11,7 +11,7 @@ func main() {
 	// Parse provided parameters
 	principal := flag.Float64("principal", 0, "The amount borrowed.")
 	interest := flag.Float64("interest", 0, "The interest rate.")
-	payment := flag.Float64("amount", 0, "Monthly repayment amount.")
+	payment := flag.Float64("payment", 0, "Monthly repayment amount.")
 	periods := flag.Uint("periods", 0, "Loan term; amount of time in months to pay off the loan.")
 	flag.Parse()
 
@@ -21,12 +21,11 @@ func main() {
 		*principal = calculatePrincipal(*interest, *payment, *periods)
 		fmt.Printf("Your loan principal is = %f!", *principal)
 	case !isFlagPassed("interest"):
-		// calculateInterest()
-		fmt.Println("Calculating Interest")
+		fmt.Println("Please provide an annual interest rate!")
 	case !isFlagPassed("periods"):
 		*periods = calculatePeriods(*payment, *principal, *interest)
 		fmt.Printf("Your loan period is = %d months!", *periods)
-	case !isFlagPassed("amount"):
+	case !isFlagPassed("payment"):
 		*payment = calculatePayment(*principal, *interest, *periods)
 		fmt.Printf("Your monthly payment = %f!", *payment)
 	}
