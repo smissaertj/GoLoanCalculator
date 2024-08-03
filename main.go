@@ -24,7 +24,8 @@ func main() {
 		fmt.Println("Please provide an annual interest rate!")
 	case !isFlagPassed("periods"):
 		*periods = calculatePeriods(*principal, *interest, *payment)
-		fmt.Printf("Your loan period is = %d months!", *periods)
+		formattedPeriod := formatMonthsToYearsAndMonths(int(*periods))
+		fmt.Printf("It will take %s to repay this loan!", formattedPeriod)
 	case !isFlagPassed("payment"):
 		*payment = calculatePayment(*principal, *interest, *periods)
 		fmt.Printf("Your monthly payment = %.0f!", *payment)
@@ -44,6 +45,38 @@ func isFlagPassed(flagName string) bool {
 
 func convertInterest(interest float64) float64 {
 	return interest / (12 * 100) // Convert annual interest rate to monthly and to a decimal
+}
+
+func formatMonthsToYearsAndMonths(totalMonths int) string {
+	years := totalMonths / 12
+	remainingMonths := totalMonths % 12
+
+	if years == 0 {
+		if remainingMonths == 1 {
+			return "1 month"
+		}
+		return fmt.Sprintf("%d months", remainingMonths)
+	}
+
+	if years == 1 && remainingMonths == 0 {
+		return "1 year"
+	}
+
+	yearString := "year"
+	if years > 1 {
+		yearString = "years"
+	}
+
+	if remainingMonths == 0 {
+		return fmt.Sprintf("%d %s", years, yearString)
+	}
+
+	monthString := "month"
+	if remainingMonths > 1 {
+		monthString = "months"
+	}
+
+	return fmt.Sprintf("%d %s and %d %s", years, yearString, remainingMonths, monthString)
 }
 
 func calculatePrincipal(interest, amount float64, period uint) float64 {
