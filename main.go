@@ -25,7 +25,7 @@ func main() {
 		fmt.Println("Calculating Interest")
 	case !isFlagPassed("period"):
 		fmt.Println("Calculating Period")
-		*period = uint(calculatePeriod(*amount, *principal, *interest))
+		*period = calculatePeriod(*amount, *principal, *interest)
 	case !isFlagPassed("amount"):
 		// calculateAmount()
 		fmt.Println("Calculating Amount")
@@ -44,10 +44,8 @@ func isFlagPassed(flagName string) bool {
 	return found
 }
 
-func calculatePeriod(payment, principal, interestRate float64) int {
+func calculatePeriod(payment, principal, interestRate float64) uint {
 	i := interestRate / (12 * 100) // Convert annual interest rate to monthly and to a decimal
-
 	n := math.Log(payment/(payment-i*principal)) / math.Log(1+i)
-
-	return int(math.Ceil(n)) // Round up to the next whole number
+	return uint(math.Ceil(n)) // Round up to the next whole number
 }
