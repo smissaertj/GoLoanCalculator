@@ -24,14 +24,14 @@ func main() {
 	case *paymentType == "annuity":
 		// Takes 3 out of 4 remaining parameters
 		// interest -> required
-		if !isFlagPassed("interest") {
+		if !isPositiveFlagPassed("interest") {
 			hasInvalidParameters()
 
-		} else if !isFlagPassed("principal") && isFlagPassed("periods") && isFlagPassed("payment") {
+		} else if !isPositiveFlagPassed("principal") && isPositiveFlagPassed("periods") && isPositiveFlagPassed("payment") {
 			*principal = calculatePrincipal(*interest, *payment, *periods)
 			fmt.Printf("Your loan principal is = %.0f!", *principal)
 
-		} else if !isFlagPassed("periods") && isFlagPassed("principal") && isFlagPassed("payment") {
+		} else if !isPositiveFlagPassed("periods") && isPositiveFlagPassed("principal") && isPositiveFlagPassed("payment") {
 			*periods = calculatePeriods(*principal, *interest, *payment)
 			formattedPeriod := formatMonthsToYearsAndMonths(int(*periods))
 			fmt.Printf("It will take %s to repay this loan!", formattedPeriod)
@@ -43,7 +43,7 @@ func main() {
 	case *paymentType == "diff":
 		// Takes 3 out of 4 remaining parameters
 		// payment -> invalid flag
-		if isFlagPassed("payment") || (!isFlagPassed("principal") || !isFlagPassed("interest") || !isFlagPassed("periods")) {
+		if isPositiveFlagPassed("payment") || (!isPositiveFlagPassed("principal") || !isPositiveFlagPassed("interest") || !isPositiveFlagPassed("periods")) {
 			hasInvalidParameters()
 
 		} else {
@@ -63,14 +63,14 @@ func isPositiveFlagValue(f *flag.Flag) bool {
 	return value > 0
 }
 
-func isFlagPassed(flagName string) bool {
-	found := false
+func isPositiveFlagPassed(flagName string) bool {
+	isFoundAndPositive := false
 	flag.Visit(func(f *flag.Flag) {
 		if f.Name == flagName {
-			found = isPositiveFlagValue(f)
+			isFoundAndPositive = isPositiveFlagValue(f)
 		}
 	})
-	return found
+	return isFoundAndPositive
 }
 
 func convertInterest(interest float64) float64 {
