@@ -19,16 +19,16 @@ func main() {
 	// Determine the missing parameter that needs to be calculated
 	switch {
 	case *paymentType == "" && *paymentType != "annuity" && *paymentType != "diff":
-		fmt.Println("Incorrect parameters")
+		hasInvalidParameters()
 	case *paymentType == "annuity":
 		// We can't calculate the interest, so it always needs to be provided
 		if !isFlagPassed("interest") {
-			fmt.Println("Incorrect parameters")
+			hasInvalidParameters()
 		}
 	case *paymentType == "diff":
 		// We can't calculate the principal or months, so a combination with the 'payment' flag is invalid
 		if isFlagPassed("payment") {
-			fmt.Println("Incorrect parameters")
+			hasInvalidParameters()
 		}
 	case !isFlagPassed("principal"):
 		*principal = calculatePrincipal(*interest, *payment, *periods)
@@ -43,7 +43,10 @@ func main() {
 		*payment = calculatePayment(*principal, *interest, *periods)
 		fmt.Printf("Your monthly payment = %.0f!", *payment)
 	}
+}
 
+func hasInvalidParameters() {
+	fmt.Println("Incorrect parameters")
 }
 
 func isFlagPassed(flagName string) bool {
