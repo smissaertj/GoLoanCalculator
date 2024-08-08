@@ -21,8 +21,18 @@ func main() {
 	case *paymentType == "" && *paymentType != "annuity" && *paymentType != "diff":
 		hasInvalidParameters()
 	case *paymentType == "annuity":
-		// We can't calculate the interest, so it always needs to be provided
-		if !isFlagPassed("interest") || !isFlagPassed("principal") || !isFlagPassed("periods") {
+		// Takes 3 out of 4 remaining parameters
+		// interest -> required
+		if !isFlagPassed("interest") {
+			hasInvalidParameters()
+		} else if !isFlagPassed("principal") && isFlagPassed("periods") && isFlagPassed("payment") {
+			*principal = calculatePrincipal(*interest, *payment, *periods)
+			fmt.Printf("Your loan principal is = %.0f!", *principal)
+		} else if !isFlagPassed("periods") && isFlagPassed("principal") && isFlagPassed("payment") {
+			*periods = calculatePeriods(*principal, *interest, *payment)
+			formattedPeriod := formatMonthsToYearsAndMonths(int(*periods))
+			fmt.Printf("It will take %s to repay this loan!", formattedPeriod)
+		} else {
 			hasInvalidParameters()
 		}
 	case *paymentType == "diff":
@@ -30,15 +40,6 @@ func main() {
 		if isFlagPassed("payment") || !isFlagPassed("principal") || !isFlagPassed("interest") || !isFlagPassed("periods") {
 			hasInvalidParameters()
 		}
-	case !isFlagPassed("principal"):
-		*principal = calculatePrincipal(*interest, *payment, *periods)
-		fmt.Printf("Your loan principal is = %.0f!", *principal)
-	case !isFlagPassed("interest"):
-		fmt.Println("Please provide an annual interest rate!")
-	case !isFlagPassed("periods"):
-		*periods = calculatePeriods(*principal, *interest, *payment)
-		formattedPeriod := formatMonthsToYearsAndMonths(int(*periods))
-		fmt.Printf("It will take %s to repay this loan!", formattedPeriod)
 	case !isFlagPassed("payment"):
 		*payment = calculatePayment(*principal, *interest, *periods)
 		fmt.Printf("Your monthly payment = %.0f!", *payment)
@@ -50,7 +51,7 @@ func hasInvalidParameters() {
 }
 
 func isPositiveFlagValue(f *flag.Flag) bool {
-	value, _ := strconv.Atoi(f.Value.String())
+	value, _ := strconv.ParseFloat(f.Value.String(), 64)
 	return value > 0
 }
 
