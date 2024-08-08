@@ -21,10 +21,15 @@ func main() {
 	case *paymentType == "" && *paymentType != "annuity" && *paymentType != "diff":
 		fmt.Println("Incorrect parameters")
 	case *paymentType == "annuity":
+		// We can't calculate the interest, so it always needs to be provided
 		if !isFlagPassed("interest") {
 			fmt.Println("Incorrect parameters")
 		}
-
+	case *paymentType == "diff":
+		// We can't calculate the principal or months, so a combination with the 'payment' flag is invalid
+		if isFlagPassed("payment") {
+			fmt.Println("Incorrect parameters")
+		}
 	case !isFlagPassed("principal"):
 		*principal = calculatePrincipal(*interest, *payment, *periods)
 		fmt.Printf("Your loan principal is = %.0f!", *principal)
