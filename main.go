@@ -22,7 +22,7 @@ func main() {
 		hasInvalidParameters()
 	case *paymentType == "annuity":
 		// We can't calculate the interest, so it always needs to be provided
-		if !isFlagPassed("principal") || !isFlagPassed("interest") || !isFlagPassed("periods") {
+		if !isFlagPassed("interest") || !isFlagPassed("principal") || !isFlagPassed("periods") {
 			hasInvalidParameters()
 		}
 	case *paymentType == "diff":
