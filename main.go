@@ -20,6 +20,11 @@ func main() {
 	switch {
 	case *paymentType == "" && *paymentType != "annuity" && *paymentType != "diff":
 		fmt.Println("Incorrect parameters")
+	case *paymentType == "annuity":
+		if !isFlagPassed("interest") {
+			fmt.Println("Incorrect parameters")
+		}
+
 	case !isFlagPassed("principal"):
 		*principal = calculatePrincipal(*interest, *payment, *periods)
 		fmt.Printf("Your loan principal is = %.0f!", *principal)
