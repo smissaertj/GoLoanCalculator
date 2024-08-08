@@ -9,6 +9,7 @@ import (
 func main() {
 
 	// Parse provided parameters
+	paymentType := flag.String("type", "", "Type of payment: 'annuity' or 'diff'.")
 	principal := flag.Float64("principal", 0, "The amount borrowed.")
 	interest := flag.Float64("interest", 0, "The interest rate.")
 	payment := flag.Float64("payment", 0, "Monthly repayment amount.")
@@ -17,6 +18,8 @@ func main() {
 
 	// Determine the missing parameter that needs to be calculated
 	switch {
+	case *paymentType == "":
+		fmt.Println("Incorrect parameters")
 	case !isFlagPassed("principal"):
 		*principal = calculatePrincipal(*interest, *payment, *periods)
 		fmt.Printf("Your loan principal is = %.0f!", *principal)
