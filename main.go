@@ -18,7 +18,7 @@ func main() {
 
 	// Determine the missing parameter that needs to be calculated
 	switch {
-	case *paymentType == "":
+	case *paymentType == "" && *paymentType != "annuity" && *paymentType != "diff":
 		fmt.Println("Incorrect parameters")
 	case !isFlagPassed("principal"):
 		*principal = calculatePrincipal(*interest, *payment, *periods)
