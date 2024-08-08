@@ -20,29 +20,37 @@ func main() {
 	switch {
 	case *paymentType == "" && *paymentType != "annuity" && *paymentType != "diff":
 		hasInvalidParameters()
+
 	case *paymentType == "annuity":
 		// Takes 3 out of 4 remaining parameters
 		// interest -> required
 		if !isFlagPassed("interest") {
 			hasInvalidParameters()
+
 		} else if !isFlagPassed("principal") && isFlagPassed("periods") && isFlagPassed("payment") {
 			*principal = calculatePrincipal(*interest, *payment, *periods)
 			fmt.Printf("Your loan principal is = %.0f!", *principal)
+
 		} else if !isFlagPassed("periods") && isFlagPassed("principal") && isFlagPassed("payment") {
 			*periods = calculatePeriods(*principal, *interest, *payment)
 			formattedPeriod := formatMonthsToYearsAndMonths(int(*periods))
 			fmt.Printf("It will take %s to repay this loan!", formattedPeriod)
+
 		} else {
 			hasInvalidParameters()
 		}
+
 	case *paymentType == "diff":
-		// We can't calculate the principal or months, so a combination with the 'payment' flag is invalid
-		if isFlagPassed("payment") || !isFlagPassed("principal") || !isFlagPassed("interest") || !isFlagPassed("periods") {
+		// Takes 3 out of 4 remaining parameters
+		// payment -> invalid flag
+		if isFlagPassed("payment") || (!isFlagPassed("principal") || !isFlagPassed("interest") || !isFlagPassed("periods")) {
 			hasInvalidParameters()
+
+		} else {
+			*payment = calculatePayment(*principal, *interest, *periods)
+			fmt.Printf("Your monthly payment = %.0f!", *payment)
 		}
-	case !isFlagPassed("payment"):
-		*payment = calculatePayment(*principal, *interest, *periods)
-		fmt.Printf("Your monthly payment = %.0f!", *payment)
+
 	}
 }
 
