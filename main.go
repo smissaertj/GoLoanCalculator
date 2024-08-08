@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"math"
+	"strconv"
 )
 
 func main() {
@@ -16,7 +17,6 @@ func main() {
 	periods := flag.Uint("periods", 0, "Loan term; amount of time in months to pay off the loan.")
 	flag.Parse()
 
-	// Determine the missing parameter that needs to be calculated
 	switch {
 	case *paymentType == "" && *paymentType != "annuity" && *paymentType != "diff":
 		hasInvalidParameters()
@@ -49,11 +49,16 @@ func hasInvalidParameters() {
 	fmt.Println("Incorrect parameters")
 }
 
+func isPositiveFlagValue(f *flag.Flag) bool {
+	value, _ := strconv.Atoi(f.Value.String())
+	return value > 0
+}
+
 func isFlagPassed(flagName string) bool {
 	found := false
 	flag.Visit(func(f *flag.Flag) {
 		if f.Name == flagName {
-			found = true
+			found = isPositiveFlagValue(f)
 		}
 	})
 	return found
