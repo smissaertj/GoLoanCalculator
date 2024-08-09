@@ -29,18 +29,18 @@ func main() {
 
 		} else if !isPositiveFlagPassed("principal") && isPositiveFlagPassed("periods") && isPositiveFlagPassed("payment") {
 			*principal = calculatePrincipal(*interest, *payment, *periods)
-			overPayment := calculateOverpayment(*payment, *principal, *periods)
+			overPayment := calculateOverpayment(*paymentType, *payment, *principal, *periods)
 			fmt.Printf("Your loan principal is = %.0f!\nOverpayment = %0.f", *principal, overPayment)
 
 		} else if !isPositiveFlagPassed("periods") && isPositiveFlagPassed("principal") && isPositiveFlagPassed("payment") {
 			*periods = calculatePeriods(*principal, *interest, *payment)
 			formattedPeriod := formatMonthsToYearsAndMonths(int(*periods))
-			overPayment := calculateOverpayment(*payment, *principal, *periods)
+			overPayment := calculateOverpayment(*paymentType, *payment, *principal, *periods)
 			fmt.Printf("It will take %s to repay this loan!\nOverpayment = %.0f", formattedPeriod, overPayment)
 
 		} else if !isPositiveFlagPassed("payment") && isPositiveFlagPassed("principal") && isPositiveFlagPassed("periods") {
 			annuityPayment := calculatePayment(*principal, *interest, *periods)
-			overPayment := calculateOverpayment(annuityPayment, *principal, *periods)
+			overPayment := calculateOverpayment(*paymentType, annuityPayment, *principal, *periods)
 			fmt.Printf("Your annuity payment = %.0f!\nOverpayment = %.0f", annuityPayment, overPayment)
 
 		} else {
@@ -54,8 +54,10 @@ func main() {
 			hasInvalidParameters()
 
 		} else {
-			*payment = calculatePayment(*principal, *interest, *periods)
-			fmt.Printf("Your monthly payment = %.0f!", *payment)
+			totalPayment := calculateDiffPayment()
+			overPayment := calculateOverpayment(*paymentType, totalPayment, *principal, *periods)
+			fmt.Printf("Your monthly payment = %.0f!\n", *payment)
+			fmt.Printf("\nOverpayment = %.0f", overPayment)
 		}
 
 	}
@@ -116,8 +118,13 @@ func formatMonthsToYearsAndMonths(totalMonths int) string {
 	return fmt.Sprintf("%d %s and %d %s", years, yearString, remainingMonths, monthString)
 }
 
-func calculateOverpayment(payment, principal float64, periods uint) float64 {
-	return (payment * float64(periods)) - principal
+func calculateOverpayment(paymentType string, payment, principal float64, periods uint) float64 {
+	switch paymentType {
+	case "diff":
+		return payment - principal
+	default:
+		return (payment * float64(periods)) - principal
+	}
 }
 
 func calculatePrincipal(interest, amount float64, period uint) float64 {
@@ -138,4 +145,8 @@ func calculatePayment(principal, interest float64, periods uint) float64 {
 	numerator := i * math.Pow(1+i, float64(periods))
 	denominator := math.Pow(1+i, float64(periods)) - 1
 	return math.Ceil(principal * (numerator / denominator))
+}
+
+func calculateDiffPayment() float64 {
+	return 514628 // TODO: remove test value and implement calculation
 }
