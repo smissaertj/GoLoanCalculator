@@ -35,7 +35,8 @@ func main() {
 		} else if !isPositiveFlagPassed("periods") && isPositiveFlagPassed("principal") && isPositiveFlagPassed("payment") {
 			*periods = calculatePeriods(*principal, *interest, *payment)
 			formattedPeriod := formatMonthsToYearsAndMonths(int(*periods))
-			fmt.Printf("It will take %s to repay this loan!", formattedPeriod)
+			overPayment := calculateOverpayment(*payment, *principal, *periods)
+			fmt.Printf("It will take %s to repay this loan!\nOverpayment = %.0f", formattedPeriod, overPayment)
 
 		} else if !isPositiveFlagPassed("payment") && isPositiveFlagPassed("principal") && isPositiveFlagPassed("periods") {
 			annuityPayment := calculateAnnuityPayment()
