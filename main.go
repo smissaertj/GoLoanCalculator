@@ -54,9 +54,15 @@ func main() {
 			hasInvalidParameters()
 
 		} else {
-			totalPayment := calculateDiffPayment()
+			payments := calculateDiffPayment(*principal, *interest, *periods)
+			totalPayment := 0.0
+
+			for i, payment := range payments {
+				totalPayment = totalPayment + payment
+				fmt.Printf("Month %d: payment is %.0f\n", i+1, payment)
+			}
+
 			overPayment := calculateOverpayment(*paymentType, totalPayment, *principal, *periods)
-			fmt.Printf("Your monthly payment = %.0f!\n", *payment)
 			fmt.Printf("\nOverpayment = %.0f", overPayment)
 		}
 
@@ -147,6 +153,15 @@ func calculatePayment(principal, interest float64, periods uint) float64 {
 	return math.Ceil(principal * (numerator / denominator))
 }
 
-func calculateDiffPayment() float64 {
-	return 514628 // TODO: remove test value and implement calculation
+func calculateDiffPayment(principal, interest float64, periods uint) []float64 {
+	interest = convertInterest(interest)
+	payments := make([]float64, periods)
+
+	for i := uint(1); i <= periods; i++ {
+		payment := principal/float64(periods) +
+			interest*(principal-principal*float64(i-1)/float64(periods))
+		payments[i-1] = math.Ceil(payment)
+	}
+
+	return payments
 }
