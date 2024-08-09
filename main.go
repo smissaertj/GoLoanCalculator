@@ -36,6 +36,11 @@ func main() {
 			formattedPeriod := formatMonthsToYearsAndMonths(int(*periods))
 			fmt.Printf("It will take %s to repay this loan!", formattedPeriod)
 
+		} else if !isPositiveFlagPassed("payment") && isPositiveFlagPassed("principal") && isPositiveFlagPassed("periods") {
+			annuityPayment := calculateAnnuityPayment()
+			fmt.Printf("Your annuity payment = %.2f\n", annuityPayment)
+			fmt.Printf("Overpayment = %.2f", annuityPayment)
+
 		} else {
 			hasInvalidParameters()
 		}
@@ -120,6 +125,10 @@ func calculatePeriods(principal, interest, payment float64) uint {
 	i := convertInterest(interest)
 	n := math.Log(payment/(payment-i*principal)) / math.Log(1+i)
 	return uint(math.Ceil(n))
+}
+
+func calculateAnnuityPayment() float64 {
+	return 0.0
 }
 
 func calculatePayment(principal, interest float64, periods uint) float64 {
