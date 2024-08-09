@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	switch {
-	case *paymentType == "" && *paymentType != "annuity" && *paymentType != "diff":
+	case *paymentType != "annuity" && *paymentType != "diff":
 		hasInvalidParameters()
 
 	case *paymentType == "annuity":
