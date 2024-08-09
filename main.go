@@ -29,7 +29,7 @@ func main() {
 
 		} else if !isPositiveFlagPassed("principal") && isPositiveFlagPassed("periods") && isPositiveFlagPassed("payment") {
 			*principal = calculatePrincipal(*interest, *payment, *periods)
-			overPayment := (*payment * float64(*periods)) - *principal
+			overPayment := calculateOverpayment(*payment, *principal, *periods)
 			fmt.Printf("Your loan principal is = %.0f!\nOverpayment = %0.f", *principal, overPayment)
 
 		} else if !isPositiveFlagPassed("periods") && isPositiveFlagPassed("principal") && isPositiveFlagPassed("payment") {
@@ -113,6 +113,10 @@ func formatMonthsToYearsAndMonths(totalMonths int) string {
 	}
 
 	return fmt.Sprintf("%d %s and %d %s", years, yearString, remainingMonths, monthString)
+}
+
+func calculateOverpayment(payment, principal float64, periods uint) float64 {
+	return (payment * float64(periods)) - principal
 }
 
 func calculatePrincipal(interest, amount float64, period uint) float64 {
