@@ -29,7 +29,8 @@ func main() {
 
 		} else if !isPositiveFlagPassed("principal") && isPositiveFlagPassed("periods") && isPositiveFlagPassed("payment") {
 			*principal = calculatePrincipal(*interest, *payment, *periods)
-			fmt.Printf("Your loan principal is = %.0f!", *principal)
+			overPayment := (*payment * float64(*periods)) - *principal
+			fmt.Printf("Your loan principal is = %.0f!\nOverpayment = %0.f", *principal, overPayment)
 
 		} else if !isPositiveFlagPassed("periods") && isPositiveFlagPassed("principal") && isPositiveFlagPassed("payment") {
 			*periods = calculatePeriods(*principal, *interest, *payment)
@@ -118,7 +119,7 @@ func calculatePrincipal(interest, amount float64, period uint) float64 {
 	i := convertInterest(interest)
 	numerator := amount
 	denominator := (i * math.Pow(1+i, float64(period))) / (math.Pow(1+i, float64(period)) - 1)
-	return math.Round(numerator / denominator)
+	return math.Floor(numerator / denominator)
 }
 
 func calculatePeriods(principal, interest, payment float64) uint {
